@@ -1,0 +1,17 @@
+﻿<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="120" cy="120" r="110" fill="#0B1C2D"/>
+
+  <!-- Sound Waves -->
+  <rect x="70" y="90" width="12" height="60" rx="6" fill="#4DA3FF"/>
+  <rect x="94" y="75" width="12" height="90" rx="6" fill="#6EDCFF"/>
+  <rect x="118" y="60" width="12" height="120" rx="6" fill="#9BF0E1"/>
+  <rect x="142" y="75" width="12" height="90" rx="6" fill="#6EDCFF"/>
+  <rect x="166" y="90" width="12" height="60" rx="6" fill="#4DA3FF"/>
+
+  <!-- Stellar Orbit -->
+  <circle cx="120" cy="120" r="92" stroke="#1E90FF" stroke-width="3" opacity="0.6"/>
+
+  <!-- Tip Dot -->
+  <circle cx="188" cy="70" r="6" fill="#FFD166"/>
+</svg>

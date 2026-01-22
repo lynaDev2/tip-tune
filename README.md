@@ -4,6 +4,14 @@
 
 TipTune is a revolutionary platform that connects music lovers directly with artists through instant, frictionless micro-tipping. Stream your favorite tracks and show appreciation with lightning-fast Stellar payments.
 
+## Color Palette
+
+- **Navy (Background)**: `#0B1C2D`
+- **Blue (Primary)**: `#4DA3FF`
+- **Ice Blue (Secondary)**: `#6EDCFF`
+- **Mint (Highlight)**: `#9BF0E1`
+- **Gold (Tip Accent)**: `#FFD166`
+
 [![Stellar](https://img.shields.io/badge/Built%20on-Stellar-black?style=flat&logo=stellar)](https://stellar.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
