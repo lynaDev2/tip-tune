@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Artist } from '../../artists/entities/artist.entity';
+import { Tip } from '../../tips/entities/tip.entity';
 
 @Entity('tracks')
 export class Track {
@@ -30,6 +31,9 @@ export class Track {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   totalTips: number;
 
+  @Column({ type: 'int', default: 0 })
+  tipCount: number;
+
   @Column({ length: 255, nullable: true })
   filename: string;
 
@@ -54,12 +58,15 @@ export class Track {
   @Column({ default: false })
   isPublic: boolean;
 
-  @Column({ uuid: true, nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   artistId: string;
 
   @ManyToOne(() => Artist, artist => artist.tracks, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'artistId' })
   artist: Artist;
+
+  @OneToMany(() => Tip, tip => tip.track)
+  tips: Tip[];
 
   @CreateDateColumn()
   createdAt: Date;

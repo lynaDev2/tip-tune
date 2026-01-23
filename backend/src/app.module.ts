@@ -4,6 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { StorageModule } from './storage/storage.module';
 import { ArtistsModule } from './artists/artists.module';
 import { TracksModule } from './tracks/tracks.module';
+import { TipsModule } from './tips/tips.module';
+import { StellarModule } from './stellar/stellar.module';
+import { WebSocketModule } from './websocket/websocket.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 
@@ -27,6 +30,9 @@ import { AuthModule } from './auth/auth.module';
     StorageModule,
     ArtistsModule,
     TracksModule,
+    TipsModule,
+    StellarModule,
+    WebSocketModule,
     UsersModule,
     AuthModule,
   ],

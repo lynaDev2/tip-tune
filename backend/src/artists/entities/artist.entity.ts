@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Track } from '../../tracks/entities/track.entity';
+import { Tip } from '../../tips/entities/tip.entity';
 
 @Entity('artists')
 export class Artist {
@@ -24,6 +25,9 @@ export class Artist {
   @Column({ length: 255, nullable: true })
   socialMedia: string;
 
+  @Column({ length: 56, nullable: true })
+  stellarAddress?: string;
+
   @Column({ default: true })
   isActive: boolean;
 
@@ -36,6 +40,9 @@ export class Artist {
   @Column({ type: 'int', default: 0 })
   followerCount: number;
 
+  @Column({ type: 'int', default: 0 })
+  tipCount: number;
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -44,4 +51,7 @@ export class Artist {
 
   @OneToMany(() => Track, track => track.artist)
   tracks: Track[];
+
+  @OneToMany(() => Tip, tip => tip.artist)
+  tips: Tip[];
 }
