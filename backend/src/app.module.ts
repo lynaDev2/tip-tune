@@ -12,6 +12,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { SearchModule } from './search/search.module';
 import { PlaylistsModule } from './playlists/playlists.module';
 import { ActivitiesModule } from './activities/activities.module';
+import { FollowsModule } from './follows/follows.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { ActivitiesModule } from './activities/activities.module';
     SearchModule,
     PlaylistsModule,
     ActivitiesModule,
+    FollowsModule,
   ],
   controllers: [],
   providers: [],

@@ -35,6 +35,14 @@ export class ArtistsService {
     return this.artistRepo.find();
   }
 
+  async findOne(id: string): Promise<Artist> {
+    const artist = await this.artistRepo.findOne({ where: { id } });
+    if (!artist) {
+      throw new NotFoundException(`Artist with ID ${id} not found`);
+    }
+    return artist;
+  }
+
   async findByUser(userId: string): Promise<Artist> {
     const artist = await this.artistRepo.findOne({ where: { userId } });
 
