@@ -35,6 +35,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('tracks')
     .addTag('users')
+    .addTag('search')
     .addTag('Authentication')
     .addBearerAuth()
     .addCookieAuth('access_token')

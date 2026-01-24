@@ -50,6 +50,9 @@ cp .env.example .env
 createdb tiptune
 
 # The application will auto-create tables on first run (in development)
+
+# Run search migration (full-text + fuzzy search)
+npm run migration:run
 ```
 
 4. Run the application:
@@ -75,6 +78,13 @@ Once running, visit `http://localhost:3001/api/docs` for interactive API documen
 - `GET /api/files/:filename/stream` - Stream audio file
 - `GET /api/files/:filename/info` - Get file information
 - `DELETE /api/files/:filename` - Delete file
+
+### Search
+
+- `GET /api/search?q=...&type=artist|track&genre=...&sort=...&page=...&limit=...` - Full-text search (artists/tracks, filters, sort, pagination)
+- `GET /api/search/suggestions?q=partial` - Autocomplete suggestions
+
+See `src/search/README.md` for details.
 
 ### Tracks
 
@@ -185,15 +195,14 @@ src/
 ### Database Migrations
 
 ```bash
-# Generate migration
-npm run typeorm migration:generate -- -n MigrationName
+# Run migrations (e.g. search indexes)
+npm run migration:run
 
-# Run migrations
-npm run typeorm migration:run
-
-# Revert migration
-npm run typeorm migration:revert
+# Revert last migration
+npm run migration:revert
 ```
+
+The **search** feature requires the migration `AddSearchIndexes` (pg_trgm, tsvector columns, GIN indexes). See `src/search/README.md`.
 
 ## License
 

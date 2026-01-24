@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { TipsModule } from './tips/tips.module';
 import { StellarModule } from './stellar/stellar.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     TipsModule,
     StellarModule,
     NotificationsModule,
+    SearchModule,
   ],
   controllers: [],
   providers: [],
