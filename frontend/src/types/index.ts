@@ -21,7 +21,8 @@ export interface PaginatedResponse<T> {
 export interface Track {
   id: string;
   title: string;
-  artist?: string;
+  artistId?: string;
+  artist?: ArtistSummary;
   filename: string;
   url: string;
   streamingUrl: string;
@@ -74,4 +75,119 @@ export interface Artist {
   bio?: string;
   avatarUrl?: string;
   createdAt: string;
+}
+
+export interface ArtistSummary {
+  id: string;
+  artistName?: string;
+}
+
+export interface PlaylistTrack {
+  id: string;
+  playlistId: string;
+  trackId: string;
+  position: number;
+  addedAt: string;
+  track?: Track;
+}
+
+export interface SmartPlaylist {
+  id: string;
+  playlistId: string;
+  criteria: Record<string, any>;
+  autoUpdate: boolean;
+  lastUpdated?: string | null;
+}
+
+export type PlaylistCollaboratorRole = 'owner' | 'editor' | 'viewer';
+export type PlaylistCollaboratorStatus = 'pending' | 'accepted';
+
+export interface PlaylistCollaborator {
+  id: string;
+  playlistId: string;
+  userId: string;
+  role: PlaylistCollaboratorRole;
+  status: PlaylistCollaboratorStatus;
+  invitedAt: string;
+  acceptedAt?: string | null;
+  user?: User;
+}
+
+export interface Playlist {
+  id: string;
+  userId: string;
+  name: string;
+  description?: string;
+  isPublic: boolean;
+  approvalRequired: boolean;
+  coverImage?: string;
+  trackCount: number;
+  totalDuration: number;
+  createdAt: string;
+  updatedAt: string;
+  user?: User;
+  playlistTracks?: PlaylistTrack[];
+  smartPlaylist?: SmartPlaylist | null;
+}
+
+export type PlaylistChangeAction = 'add_track' | 'remove_track' | 'reorder_tracks';
+export type PlaylistChangeStatus = 'pending' | 'approved' | 'rejected';
+
+export interface PlaylistChangeRequest {
+  id: string;
+  playlistId: string;
+  requestedById: string;
+  action: PlaylistChangeAction;
+  payload: Record<string, any>;
+  status: PlaylistChangeStatus;
+  reviewedById?: string | null;
+  reviewedAt?: string | null;
+  createdAt: string;
+  requestedBy?: User;
+  reviewedBy?: User | null;
+}
+
+export type ActivityType =
+  | 'new_track'
+  | 'tip_sent'
+  | 'tip_received'
+  | 'artist_followed'
+  | 'new_follower'
+  | 'playlist_track_added'
+  | 'playlist_track_removed'
+  | 'playlist_collaborator_invited'
+  | 'playlist_collaborator_accepted'
+  | 'playlist_collaborator_rejected'
+  | 'playlist_collaborator_role_updated'
+  | 'playlist_collaborator_removed'
+  | 'playlist_change_requested'
+  | 'playlist_change_approved'
+  | 'playlist_change_rejected'
+  | 'smart_playlist_refreshed';
+
+export type EntityType = 'track' | 'tip' | 'artist' | 'playlist' | 'smart_playlist';
+
+export interface Activity {
+  id: string;
+  userId: string;
+  activityType: ActivityType;
+  entityType: EntityType;
+  entityId: string;
+  metadata?: Record<string, any>;
+  isSeen?: boolean;
+  createdAt: string;
+  user?: User;
+}
+
+export interface ActivityFeedResponse {
+  data: Activity[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    unseenCount: number;
+  };
 }
