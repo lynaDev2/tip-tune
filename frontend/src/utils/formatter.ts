@@ -15,14 +15,15 @@ export const formatNumber = (num: number): string => {
   }).format(num);
 };
 
-export const formatDate = (date: Date): string => {
+export const formatDate = (date: Date | string): string => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
     return new Intl.DateTimeFormat('en-US', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
-    }).format(date);
+    }).format(dateObj);
 }
 
 export const exportTipsToCSV = (tips: Tip[]) => {
@@ -32,7 +33,7 @@ export const exportTipsToCSV = (tips: Tip[]) => {
     tip.tipperName,
     tip.amount,
     `"${tip.message.replace(/"/g, '""')}"`,
-    tip.timestamp.toISOString(),
+    tip.timestamp,
   ]);
 
   const csvContent = "data:text/csv;charset=utf-8," 

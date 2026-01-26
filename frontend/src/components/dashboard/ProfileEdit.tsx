@@ -1,9 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
 import { UserProfile } from '../../types';
 import Card from '../ui/Card';
 import Skeleton from '../ui/Skeleton';
 import { updateUserProfile } from '../../services/artistService';
+import { toast } from 'react-toastify';
 
 interface ProfileSectionProps {
   profile?: UserProfile;
@@ -27,12 +29,18 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, isLoading }) =
   const handleSave = async () => {
     if (!editedProfile) return;
     setIsSaving(true);
-    await updateUserProfile(editedProfile);
-    setIsSaving(false);
-    setIsEditing(false);
+    try {
+         const saved = await updateUserProfile(editedProfile);
+        setEditedProfile(saved);
+        setIsEditing(false);
+          } 
+          catch (err) {
+        console.error(err);
+        toast.error('Failed to update profile');
+      } finally {
+        setIsSaving(false);
+    }
   };
-  
-  const qrCodeUrl = profile ? `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(profile.walletAddress)}` : '';
 
   if (isLoading || !editedProfile) {
     return (
@@ -91,7 +99,15 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, isLoading }) =
             <h4 className="font-semibold">Wallet Address</h4>
             <div className="mt-2 flex items-center bg-gray-100 rounded-lg p-3">
               <p className="text-sm text-gray-700 font-mono break-all flex-1">{editedProfile.walletAddress}</p>
-              <img src={qrCodeUrl} alt="Wallet QR Code" className="w-20 h-20 ml-4 rounded-lg" />
+              <div className="ml-4 flex-shrink-0">
+                <QRCodeSVG 
+                  value={editedProfile.walletAddress} 
+                  size={80}
+                  level="M"
+                  includeMargin={false}
+                  className="rounded-lg"
+                />
+              </div>
             </div>
           </div>
         </div>

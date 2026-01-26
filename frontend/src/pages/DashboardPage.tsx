@@ -47,7 +47,9 @@ const Dashboard: React.FC = () => {
         loadDashboardData();
     }, [loadDashboardData]);
 
-    // Simulate real-time tip updates with a WebSocket
+    // Simulate tip updates with polling (for demo purposes)
+    // Note: For production, replace with actual WebSocket integration using socket.io-client
+    // See useNotifications hook for example WebSocket implementation
     useEffect(() => {
         const interval = setInterval(() => {
             if(!isLoading){
@@ -57,7 +59,7 @@ const Dashboard: React.FC = () => {
                     tipperAvatar: 'https://i.pravatar.cc/150?u=realtime',
                     amount: parseFloat((Math.random() * 20).toFixed(2)),
                     message: 'Just got this tip!',
-                    timestamp: new Date(),
+                    timestamp: new Date().toISOString(),
                     trackId: topTracks[Math.floor(Math.random() * topTracks.length)]?.id,
                 };
 

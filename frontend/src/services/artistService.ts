@@ -1,5 +1,5 @@
 
-import { UserProfile, StatCardData, ChartDataPoint, Track, Tip } from '../types';
+import { UserProfile,  ChartDataPoint, Track, Tip } from '../types';
 
 const MOCK_DELAY = 1200;
 
@@ -12,10 +12,10 @@ const mockUserProfile: UserProfile = {
 };
 
 const mockTracks: Track[] = [
-  { id: 1, title: 'Neon Dreams', artist: 'DJ Melodica', coverArt: 'https://picsum.photos/seed/track1/100/100', plays: 120543, tips: 1500.50 },
-  { id: 2, title: 'City Lights', artist: 'DJ Melodica', coverArt: 'https://picsum.photos/seed/track2/100/100', plays: 98765, tips: 1250.75 },
-  { id: 3, title: 'Sunset Groove', artist: 'DJ Melodica', coverArt: 'https://picsum.photos/seed/track3/100/100', plays: 76543, tips: 980.00 },
-  { id: 4, title: 'Midnight Drive', artist: 'DJ Melodica', coverArt: 'https://picsum.photos/seed/track4/100/100', plays: 54321, tips: 750.25 },
+  { id: 'track-1', title: 'Neon Dreams', coverArt: 'https://picsum.photos/seed/track1/100/100', plays: 120543, tips: 1500.50 },
+  { id: 'track-2', title: 'City Lights', coverArt: 'https://picsum.photos/seed/track2/100/100', plays: 98765, tips: 1250.75 },
+  { id: 'track-3', title: 'Sunset Groove', coverArt: 'https://picsum.photos/seed/track3/100/100', plays: 76543, tips: 980.00 },
+  { id: 'track-4', title: 'Midnight Drive', coverArt: 'https://picsum.photos/seed/track4/100/100', plays: 54321, tips: 750.25 },
 ];
 
 const mockRecentTips: Tip[] = Array.from({ length: 25 }, (_, i) => ({
@@ -24,7 +24,7 @@ const mockRecentTips: Tip[] = Array.from({ length: 25 }, (_, i) => ({
   tipperAvatar: `https://i.pravatar.cc/150?u=fan${i}`,
   amount: parseFloat((Math.random() * (50 - 1) + 1).toFixed(2)),
   message: i % 3 === 0 ? 'Love your new track!' : (i % 3 === 1 ? 'Keep it up!' : 'This is fire! 🔥'),
-  timestamp: new Date(Date.now() - i * 1000 * 60 * 60 * (Math.random() * 5)),
+  timestamp: new Date(Date.now() - i * 1000 * 60 * 60 * (Math.random() * 5)).toISOString(),
   trackId: mockTracks[i % mockTracks.length].id,
 }));
 
@@ -73,7 +73,7 @@ export const fetchTopTracks = (): Promise<Track[]> => {
 export const fetchRecentTips = (): Promise<Tip[]> => {
   return new Promise(resolve => {
     setTimeout(() => {
-      resolve(mockRecentTips.sort((a,b) => b.timestamp.getTime() - a.timestamp.getTime()));
+      resolve(mockRecentTips.sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()));
     }, MOCK_DELAY);
   });
 };
@@ -81,7 +81,7 @@ export const fetchRecentTips = (): Promise<Tip[]> => {
 export const updateUserProfile = (profile: UserProfile): Promise<UserProfile> => {
     return new Promise(resolve => {
         setTimeout(() => {
-            console.log("Updated profile:", profile);
+            // Profile updated successfully (sensitive data not logged for privacy)
             resolve(profile);
         }, 1000);
     });

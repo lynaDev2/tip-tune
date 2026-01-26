@@ -19,17 +19,14 @@ export interface PaginatedResponse<T> {
 
 // Track types
 export interface Track {
-  // id: string;
-  id: number;
-//   title: string;
-  artist: string;
+  id: string;
+  // artist: string;
   title: string;
   coverArt: string;
   plays: number;
   artistId?: string;
   tips: number;
-
-  // artist?: ArtistSummary;
+  artist?: ArtistSummary;
   filename?: string;
   url?: string;
   streamingUrl?: string;
@@ -40,7 +37,7 @@ export interface Track {
   description?: string;
   genre?: string;
   album?: string;
-  playCount? : number;
+  playCount?: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -53,28 +50,14 @@ export enum TipStatus {
 }
 
 export interface Tip {
-    id: string;
-    tipperName: string;
-    tipperAvatar: string;
-    amount: number;
-    message: string;
-    timestamp: Date;
-    trackId?: number;
-  }
-  
-
-// export interface Tip {
-//   id: string;
-//   fromUserId: string;
-//   toArtistId: string;
-//   trackId?: string;
-//   amount: number;
-//   usdValue: number;
-//   stellarTxHash: string;
-//   status: TipStatus;
-//   message?: string;
-//   createdAt: string;
-// }
+  id: string;
+  tipperName: string;
+  tipperAvatar: string;
+  amount: number;
+  message: string;
+  timestamp: string; // ISO 8601 string from API
+  trackId?: string; // UUID string matching Track.id
+}
 
 // User types
 export interface User {

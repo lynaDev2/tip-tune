@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tip, Track } from '../../types';
 import Card from '../ui/Card';
 import Skeleton from '../ui/Skeleton';
@@ -18,6 +18,18 @@ const RecentTips: React.FC<RecentTipsProps> = ({ tips, tracks, isLoading }) => {
 
     const totalPages = Math.ceil(tips.length / TIPS_PER_PAGE);
     const paginatedTips = tips.slice((currentPage - 1) * TIPS_PER_PAGE, currentPage * TIPS_PER_PAGE);
+    
+    useEffect(() => {
+        if (totalPages === 0) {
+            if (currentPage !== 1) setCurrentPage(1);
+        } else if (currentPage > totalPages) {
+            setCurrentPage(totalPages);
+        }
+    }, [currentPage, totalPages]);
+
+    const isEmpty = tips.length === 0;
+    const startIndex = isEmpty ? 0 : (currentPage - 1) * TIPS_PER_PAGE + 1;
+    const endIndex = isEmpty ? 0 : Math.min(currentPage * TIPS_PER_PAGE, tips.length);
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
@@ -31,7 +43,7 @@ const RecentTips: React.FC<RecentTipsProps> = ({ tips, tracks, isLoading }) => {
         }
     };
     
-    const getTrackTitle = (trackId?: number) => {
+    const getTrackTitle = (trackId?: string) => {
         if (!trackId) return 'General Support';
         return tracks.find(t => t.id === trackId)?.title || 'Unknown Track';
     }
@@ -92,13 +104,13 @@ const RecentTips: React.FC<RecentTipsProps> = ({ tips, tracks, isLoading }) => {
       </div>
        <div className="mt-4 flex items-center justify-between">
         <p className="text-sm text-gray-700">
-            Showing <span className="font-medium">{(currentPage - 1) * TIPS_PER_PAGE + 1}</span> to <span className="font-medium">{Math.min(currentPage * TIPS_PER_PAGE, tips.length)}</span> of <span className="font-medium">{tips.length}</span> results
+            Showing <span className="font-medium">{startIndex}</span> to <span className="font-medium">{endIndex}</span> of <span className="font-medium">{tips.length}</span> results
         </p>
         <div className="space-x-2">
-            <button onClick={handlePrevPage} disabled={currentPage === 1 || isLoading} className="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+            <button onClick={handlePrevPage} disabled={currentPage <= 1 || isLoading || totalPages === 0} className="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
                 Previous
             </button>
-            <button onClick={handleNextPage} disabled={currentPage === totalPages || isLoading} className="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+            <button onClick={handleNextPage} disabled={currentPage >= totalPages || isLoading || totalPages === 0} className="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
                 Next
             </button>
         </div>
