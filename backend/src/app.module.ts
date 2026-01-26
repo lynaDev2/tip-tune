@@ -19,6 +19,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { GamificationModule } from './gamification/gamification.module';
 import { ScheduledReleasesModule } from './scheduled-releases/scheduled-releases.module';
 import { LeaderboardsModule } from './leaderboards/leaderboards.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { LeaderboardsModule } from './leaderboards/leaderboards.module';
     EventEmitterModule.forRoot(),
     ScheduledReleasesModule,
     LeaderboardsModule,
+    ReportsModule,
   ],
   controllers: [],
   providers: [],
