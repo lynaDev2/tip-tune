@@ -1,6 +1,6 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import * as StellarSdk from "@stellar/stellar-sdk";
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import * as StellarSdk from '@stellar/stellar-sdk';
 
 @Injectable()
 export class StellarService {
@@ -8,14 +8,11 @@ export class StellarService {
   private readonly logger = new Logger(StellarService.name);
 
   constructor(private configService: ConfigService) {
-    const network = this.configService.get<string>(
-      "STELLAR_NETWORK",
-      "testnet",
-    );
+    const network = this.configService.get<string>('STELLAR_NETWORK', 'testnet');
     const horizonUrl =
-      network === "mainnet"
-        ? "https://horizon.stellar.org"
-        : "https://horizon-testnet.stellar.org";
+      network === 'mainnet'
+        ? 'https://horizon.stellar.org'
+        : 'https://horizon-testnet.stellar.org';
 
     this.server = new StellarSdk.Horizon.Server(horizonUrl);
   }
@@ -24,6 +21,8 @@ export class StellarService {
     txHash: string,
     amount: string,
     recipientId: string,
+    assetCode: string = 'XLM',
+    assetIssuer?: string,
   ): Promise<boolean> {
     try {
       const tx = await this.server.transactions().transaction(txHash).call();
@@ -40,28 +39,61 @@ export class StellarService {
       const operations = await tx.operations();
 
       const paymentOp = operations.records.find(
-        (op) =>
-          op.type === "payment" &&
-          op.to === recipientId &&
-          op.amount === amount, // Note: exact string match.
-        // Better to use a BigNumber library or StellarSdk's handling if precision is key,
-        // but for now string comparison matches API.
+        (op: any) => {
+          // Check type and basic fields
+          const isPayment = op.type === 'payment' || op.type === 'path_payment_strict_send' || op.type === 'path_payment_strict_receive';
+          if (!isPayment || op.to !== recipientId) return false;
+
+          // Check amount
+          if (op.amount !== amount) return false;
+
+          // Check asset
+          if (assetCode === 'XLM' || assetCode === 'native') {
+            return op.asset_type === 'native';
+          } else {
+            return (
+              (op.asset_code === assetCode && op.asset_issuer === assetIssuer) ||
+              // Handle path payments where 'to' asset matches
+              (op.asset_code === undefined && op.asset_type === 'native' && assetCode === 'XLM') // Fallback for some structures
+            );
+          }
+        }
       );
 
       if (!paymentOp) {
         this.logger.warn(
-          `Transaction ${txHash} does not contain a valid payment operation to ${recipientId} for ${amount}`,
+          `Transaction ${txHash} does not contain a valid payment operation to ${recipientId} for ${amount} ${assetCode}`,
         );
         return false;
       }
 
       return true;
     } catch (error) {
-      this.logger.error(
-        `Error verifying transaction ${txHash}: ${error.message}`,
-      );
+      this.logger.error(`Error verifying transaction ${txHash}: ${error.message}`);
       return false;
     }
+  }
+
+  async getConversionRate(fromAssetCode: string, toAssetCode: string, amount: number) {
+     try {
+       const fromAsset = fromAssetCode === 'XLM' ? StellarSdk.Asset.native() : new StellarSdk.Asset(fromAssetCode, 'TODO_ISSUER_LOOKUP'); // Needs issuer lookup in real implementation
+       const toAsset = toAssetCode === 'XLM' ? StellarSdk.Asset.native() : new StellarSdk.Asset(toAssetCode, 'TODO_ISSUER_LOOKUP');
+
+       // Use strict send path to find how much destination asset we get for source amount
+       const paths = await this.server.strictSendPaths(fromAsset, amount.toString(), [toAsset]).call();
+       
+       if (paths.records && paths.records.length > 0) {
+         // Return the best path's destination amount
+         return {
+           rate: parseFloat(paths.records[0].destination_amount) / amount,
+           estimatedAmount: paths.records[0].destination_amount
+         };
+       }
+       return { rate: 0, estimatedAmount: 0 };
+     } catch (error) {
+       this.logger.error(`Error fetching conversion rate: ${error.message}`);
+       return { rate: 0, estimatedAmount: 0 };
+     }
   }
 
   async getTransactionDetails(txHash: string) {
@@ -69,9 +101,7 @@ export class StellarService {
       const tx = await this.server.transactions().transaction(txHash).call();
       return tx;
     } catch (error) {
-      this.logger.error(
-        `Error fetching transaction ${txHash}: ${error.message}`,
-      );
+      this.logger.error(`Error fetching transaction ${txHash}: ${error.message}`);
       throw error;
     }
   }
@@ -84,27 +114,9 @@ export class StellarService {
     // 3. Sign and submit
 
     // For now, return a mock hash if enabled
-    if (process.env.ENABLE_NFT_MINTING === "true") {
-      return "mock_tx_hash_" + Date.now();
+    if (process.env.ENABLE_NFT_MINTING === 'true') {
+      return 'mock_tx_hash_' + Date.now();
     }
     return null;
-  }
-
-  async sendMultiRecipientPayment(
-    recipients: Array<{ destination: string; amount: string }>,
-    sourceTransactionRef?: string,
-  ): Promise<string> {
-    this.logger.log(
-      `Sending multi-recipient payment to ${recipients.length} recipients (MOCKED)`,
-    );
-    // In a real implementation:
-    // 1. Get the source account (issuer account)
-    // 2. Build a transaction with multiple payment operations
-    // 3. Sign the transaction
-    // 4. Submit to the network
-    // 5. Return the transaction hash
-
-    // For now, return a mock hash
-    return "mock_multi_payment_" + Date.now();
   }
 }
